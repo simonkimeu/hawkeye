@@ -1,65 +1,31 @@
 # Hawkeye
 
-A scheduled web scraper and change detection bot built with Node.js.
-Hawkeye silently watches a target URL at regular intervals, extracts
-content using a CSS selector, and compares it against the previous
-snapshot. When a change is detected, it logs a timestamped alert to
-a file so nothing slips past unnoticed.
+Scheduled web scraper that watches URLs for content changes and logs alerts when something shifts. Built to understand how scraping works — fetching raw HTML, parsing it by selector, and diffing content over time.
 
-## Install
+Cron triggers a scrape on schedule. Axios fetches the HTML, Cheerio pulls content by CSS selector, differ.js compares it to the last snapshot. If it changed, alerter.js appends a timestamped entry to a log file. Each file does one thing.
 
-git clone https://github.com/simonkimeu/hawkeye.git
-cd hawkeye
-npm install
-
-## Run
-
-node src/index.js
-
-Hawkeye will immediately begin watching and check every minute.
-
-## Example Output
-
-👁️ Hawkeye is watching...
-[2026-05-08T19:39:01.639Z] No changes detected.
-[2026-05-08T19:40:09.339Z] No changes detected.
-🚨 Change detected on https://news.ycombinator.com
-
-## Alerts Log
-
-All detected changes are appended to alerts.log with full content snapshot:
-
-[2026-05-08T19:41:01.552Z] CHANGE DETECTED on https://news.ycombinator.com
-Google Cloud Fraud Defence is just WEI repackaged
-AI Is Breaking Two Vulnerability Cultures
-...
----
+The snapshot lives in memory — it resets on restart. A production version would persist it to disk or a database.
 
 ## Configuration
 
-Edit these values in src/index.js to watch any site:
+Target URL and selector are set in `index.js`:
 
-TARGET_URL — the URL to monitor
-SELECTOR  — CSS selector targeting the content to track
-cron.schedule("*/1 * * * *") — frequency (default: every 1 minute)
+```js
+const TARGET_URL = 'https://news.ycombinator.com';
+const SELECTOR = '.titleline > a';
+```
 
-Example: watch a blog's latest post title
-TARGET_URL = "https://someblog.com"
-SELECTOR = "h1.post-title"
+Change these to watch any page and any element.
 
-## How It Works
+## Run locally
 
-1. node-cron triggers a scrape on the defined schedule
-2. axios fetches the page HTML
-3. cheerio extracts text matching the CSS selector
-4. differ.js compares current content to previous snapshot
-5. If changed, alerter.js appends a timestamped entry to alerts.log
+```bash
+npm install
+node index.js
+```
 
-## Tech Stack
-- Node.js
-- axios (HTTP requests)
-- cheerio (HTML parsing)
-- node-cron (task scheduling)
+Alerts are written to `alerts.log` in the project root.
 
-## Author
-Simon Kimeu — github.com/simonkimeu
+## Stack
+
+Node.js · Axios · Cheerio · node-cron
