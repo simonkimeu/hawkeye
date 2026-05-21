@@ -1,13 +1,14 @@
 {
   "name": "hawkeye",
   "version": "1.0.0",
-  "description": "",
+  "description": "Scheduled web scraper that detects content changes and logs alerts.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["scraper", "cron", "change-detection"],
+  "author": "Simon Kimeu",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
